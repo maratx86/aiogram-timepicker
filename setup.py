@@ -19,7 +19,7 @@ setup(
           'aiogram',
       ],
   classifiers=[
-    'Development Status :: 1 - Alpha',
+    'Development Status :: 3 - Alpha',
     'Intended Audience :: Developers',
     'Topic :: Software Development :: Libraries :: Python Modules',
     'License :: OSI Approved :: MIT License',

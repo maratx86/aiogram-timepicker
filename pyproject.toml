@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aiogram_timepicker"
+version = "0.0.1"
+authors = [
+  { name="Marat Ashrafzianov", email="maratashdev@gmail.com" },
+]
+description = "Time Selection tool for Aiogram Telegram Bots"
+readme = "README.md"
+license = { file="LICENSE" }
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/maratx86/aiogram-timepicker"
+"Bug Tracker" = "https://github.com/maratx86/aiogram-timepicker/issues"

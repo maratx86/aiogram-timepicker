@@ -11,7 +11,7 @@ setup(
   description='Simple Inline Time Selection tool for Aiogram Telegram bots',
   long_description=long_description,
   author='Marat Ashrafzianov',
-  author_email='marat.ashraf@yandex.ru',
+  author_email='maratashdev@gmail.com',
   url='https://github.com/maratx86/aiogram-timepicker',
   download_url='https://github.com/maratx86/aiogram-timepicker/archive/refs/tags/0.0.1.tar.gz',
   keywords=['Aiogram', 'Telegram', 'Bots', 'Time', 'Timepicker'],

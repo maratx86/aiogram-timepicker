@@ -19,3 +19,7 @@ from aiogram_timepicker.min_sec import \
     timepicker_callback as minsec_timep_callback, \
     TimePicker as MinSecTimePicker, \
     default as minsec_timep_default
+from aiogram_timepicker.carousel.full import \
+    timepicker_callback as full2_timep_callback, \
+    TimePicker as Full2TimePicker, \
+    default as full2_timep_default

@@ -11,3 +11,5 @@ config.py
 dist/
 MANIFEST
 MANIFEST.in
+
+aiogram_timepicker.egg-info

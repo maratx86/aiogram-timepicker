@@ -5,41 +5,9 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.callback_data import CallbackData
 from aiogram.types import CallbackQuery
 
-from . import hour_picker
-
-
-# setting timepicker_callback prefix and parts
-timepicker_callback = CallbackData('full_timepicker', 'act', 'hour', 'minute', 'second')
-
-_default = {
-    'up': '^',
-    'down': '|',
-    'select': 'Select',
-    'cancel': 'Cancel',
-    'empty': ' ',
-    'hour_format': '{0:02}',
-    'minute_format': '{0:02}',
-    'second_format': '{0:02}',
-}
-
-
-def default(**kwargs):
-    if 'label_up' in kwargs:
-        _default['up'] = kwargs.get('label_up')
-    if 'label_down' in kwargs:
-        _default['down'] = kwargs.get('label_down')
-    if 'label_empty' in kwargs:
-        _default['empty'] = kwargs.get('label_empty')
-    if 'label_select' in kwargs:
-        _default['select'] = kwargs.get('label_select')
-    if 'label_cancel' in kwargs:
-        _default['cancel'] = kwargs.get('label_cancel')
-    if 'hour_format' in kwargs:
-        _default['hour_format'] = kwargs.get('hour_format')
-    if 'minute_format' in kwargs:
-        _default['minute_format'] = kwargs.get('minute_format')
-    if 'second_format' in kwargs:
-        _default['second_format'] = kwargs.get('second_format')
+from .. import result
+from ..single import minute, second, hour
+from . import _default, timepicker_callback, adapter
 
 
 class TimePicker:
@@ -80,7 +48,6 @@ class TimePicker:
             ))
         inline_kb.row()
 
-
     async def _not_atomic_picker(self, inline_kb: InlineKeyboardMarkup, _time: datetime):
         _tds = {
             timedelta(hours=1),
@@ -117,12 +84,6 @@ class TimePicker:
         :param int cancel: Action to perform after canceling, if None the keyboard is closed.
         :return: Returns InlineKeyboardMarkup object with the timepicker keyboard.
         """
-        if hour >= 24 or hour < 0:
-            ValueError('FullTimepicker: hours should be 0...23.')
-        if minute >= 60 or minute < 0:
-            ValueError('FullTimepicker: minutes should be 0...59.')
-        if second >= 60 or second < 0:
-            ValueError('FullTimepicker: seconds should be 0...59.')
         self.cancel = cancel
         inline_kb = InlineKeyboardMarkup(row_width=6)
         ignore_callback = self.callback.new("IGNORE", hour, minute, second)
@@ -154,37 +115,107 @@ class TimePicker:
         ))
         return inline_kb
 
-    async def process_selection(self, query: CallbackQuery, data: CallbackData) -> tuple:
+    async def _process_selection_all_int(self, query: CallbackQuery, act: str, seconds: int, minutes: int, hours: int):
+        if act == "CHANGE":
+            await query.message.edit_reply_markup(
+                await self.start_picker(hours, minutes, seconds, cancel=self.cancel)
+            )
+            return result.Result(
+                result.Status.CHANGED,
+                hours=hours, minutes=minutes, seconds=seconds,
+            )
+        elif act == "SELECTED":
+            return result.Result(
+                result.Status.SELECTED,
+                hours=hours, minutes=minutes, seconds=seconds,
+            )
+        elif act == "CHOOSE_H":
+            kb = await hour.TimePicker(1, None).start_picker(
+                hours, str_callback=self.callback.new('CHANGE', '{hour}', minutes, seconds))
+            await query.message.edit_reply_markup(kb)
+            return result.Result(
+                result.Status.CHANGE_HOUR,
+                hours=hours, minutes=minutes, seconds=seconds,
+            )
+        elif act == "CHOOSE_M" or act == "GRP_MIN_MENU":
+            kb = await minute.TimePicker(self.interval // 60 if self.interval >= 60 else 1, self.callback)\
+                .change_default_action(
+                **adapter.minute.function_replace_default(
+                    self.callback, seconds, minutes, hours)
+            ).start_picker(minutes)
+            await query.message.edit_reply_markup(kb)
+            return result.Result(
+                result.Status.CHANGE_MINUTE,
+                hours=hours, minutes=minutes, seconds=seconds,
+            )
+        elif act == "CHOOSE_S" or act == "GRP_SEC_MENU":
+            kb = await second.TimePicker(self.interval, None)\
+                .change_default_action(
+                **adapter.second.function_replace_default(
+                    self.callback, seconds, minutes, hours)
+            ).start_picker(seconds)
+            await query.message.edit_reply_markup(kb)
+            return result.Result(
+                result.Status.CHANGE_SECOND,
+                hours=hours, minutes=minutes, seconds=seconds,
+            )
+        return result.Result()
+
+    async def _process_selection_not_int(self, query: CallbackQuery, act: str, seconds: str, minutes: str, hours: str):
+        # processing empty buttons, answering with no action
+        if act == "GRP_MIN":
+            m = minutes.split('-')[0]
+            m = int(m) if m.isdigit() else 0
+            await minute.TimePicker(
+                self.interval // 60 if self.interval >= 60 else 1, self.callback
+            ).change_default_action(
+                **adapter.minute.function_replace_default(
+                    self.callback, seconds, m, hours)
+            ).process_group_selection(query, minutes)
+            return result.Result(
+                result.Status.SELECT_GROUP_MINUTE,
+                **{
+                    hours: int(hours) if hours.isdigit() else 0,
+                    seconds: int(seconds) if seconds.isdigit() else 0,
+                }
+            )
+        elif act == "GRP_SEC":
+            s = seconds.split('-')[0]
+            s = int(s) if s.isdigit() else 0
+            await second.TimePicker(self.interval, self.callback).change_default_action(
+                **adapter.second.function_replace_default(
+                    self.callback, s, minutes, hours)
+            ).process_group_selection(query, seconds)
+            return result.Result(
+                result.Status.SELECT_GROUP_SECOND,
+                **{
+                    hours: int(hours) if hours.isdigit() else 0,
+                    minutes: int(minutes) if minutes.isdigit() else 0,
+                }
+            )
+        return result.Result()
+
+    async def process_selection(self, query: CallbackQuery, data: CallbackData) -> result.Result:
         """
         Process the callback_query. This method generates a new time picker if forward or
         backward is pressed. This method should be called inside a CallbackQueryHandler.
         :param query: callback_query, as provided by the CallbackQueryHandler
-        :param data: callback_data, dictionary, set by self.callback (default timepicker_callback)
-        :return: Returns a tuple (Boolean,datetime), indicating if a date is selected
-                    and returning the date if so.
+        :param data: callback_data, dictionary, set by `self.callback` (default timepicker_callback)
+        :return: Returns an aiogram_timepicker.result.Result object.
         """
-        return_data = (False, None)
         if data['act'] == "CANCEL":
             if self.cancel:
                 await self.cancel(query, data)
             else:
                 await query.message.delete()
-            return return_data
-        hours = int(data['hour'])
-        minutes = int(data['minute'])
-        seconds = int(data['second'])
-        time_ = datetime(1970, 1, 1, hours, minutes, seconds)
-        # processing empty buttons, answering with no action
-        if data['act'] == "IGNORE":
+            return result.Result(result.Status.CANCELED)
+        elif data['act'] == "IGNORE":
             await query.answer(cache_time=60)
-        if data['act'] == "CHANGE":
-            await query.message.edit_reply_markup(
-                await self.start_picker(hours, minutes, seconds, cancel=self.cancel)
+            return result.Result()
+        if not (data['hour'].isdigit() and data['minute'].isdigit() and data['second'].isdigit()):
+            return await self._process_selection_not_int(
+                query, data['act'], data['second'], data['minute'], data['hour']
             )
-        if data['act'] == "CHOOSE_H":
-            kb = await hour_picker.HourTimePicker(1, None).start_picker(
-                hours, str_callback=self.callback.new('CHANGE', '{hour}', minutes, seconds))
-            await query.message.edit_reply_markup(kb)
-        if data['act'] == "SELECTED":
-            return_data = True, time_
-        return return_data
+        return await self._process_selection_all_int(
+            query, data['act'], int(data['second']), int(data['minute']), int(data['hour'])
+        )

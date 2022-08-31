@@ -15,3 +15,7 @@ from aiogram_timepicker.single.second import \
     timepicker_callback as second_timep_callback, \
     TimePicker as SecondTimePicker, \
     default as second_timep_default
+from aiogram_timepicker.min_sec import \
+    timepicker_callback as minsec_timep_callback, \
+    TimePicker as MinSecTimePicker, \
+    default as minsec_timep_default

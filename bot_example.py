@@ -1,6 +1,5 @@
 import os
 import logging
-import json
 
 from aiogram import Bot, Dispatcher
 from aiogram.types import Message, CallbackQuery, ReplyKeyboardMarkup
@@ -8,7 +7,9 @@ from aiogram.utils import executor
 from aiogram.dispatcher.filters import Text
 from aiogram_timepicker import FullTimePicker, full_timep_callback, full_timep_default, \
     HourTimePicker, hour_timep_callback, MinuteTimePicker, minute_timep_callback, \
-    SecondTimePicker, second_timep_callback
+    SecondTimePicker, second_timep_callback, \
+    MinSecTimePicker, minsec_timep_callback, minsec_timep_default
+
 
 # insert your telegram bot API key here
 API_TOKEN = '' or os.getenv('token')
@@ -23,6 +24,7 @@ dp = Dispatcher(bot)
 start_kb = ReplyKeyboardMarkup(resize_keyboard=True, )
 start_kb.row('Full TimePicker')
 start_kb.row('Hour TimePicker', 'Minute Timepicker', 'Second Timepicker')
+start_kb.row('Minute & Second')
 
 
 # starting bot when user sends `/start` command, answering with inline timepicker
@@ -86,7 +88,7 @@ async def process_minute_timepicker(callback_query: CallbackQuery, callback_data
 
 
 @dp.message_handler(Text(equals=['Second TimePicker'], ignore_case=True))
-async def minute_picker_handler(message: Message):
+async def second_picker_handler(message: Message):
     await message.answer(
         "Please select a second: ",
         reply_markup=await SecondTimePicker(5, group_inside_count=10).start_picker()
@@ -94,7 +96,7 @@ async def minute_picker_handler(message: Message):
 
 
 @dp.callback_query_handler(second_timep_callback.filter())
-async def process_minute_timepicker(callback_query: CallbackQuery, callback_data: dict):
+async def process_second_timepicker(callback_query: CallbackQuery, callback_data: dict):
     r = await SecondTimePicker(5, group_inside_count=10).process_selection(callback_query, callback_data)
     if r.selected:
         await callback_query.message.edit_text(
@@ -102,10 +104,30 @@ async def process_minute_timepicker(callback_query: CallbackQuery, callback_data
         )
 
 
+@dp.message_handler(Text(equals=['Minute & Second'], ignore_case=True))
+async def second_picker_handler(message: Message):
+    await message.answer(
+        "Please select a time: ",
+        reply_markup=await MinSecTimePicker(5).start_picker()
+    )
+
+
+@dp.callback_query_handler(minsec_timep_callback.filter())
+async def process_second_timepicker(callback_query: CallbackQuery, callback_data: dict):
+    r = await MinSecTimePicker(5).process_selection(callback_query, callback_data)
+    if r.selected:
+        await callback_query.message.edit_text(
+            'You selected {time}.'.format(time=r.time.strftime('%M:%S')),
+        )
+
+
 if __name__ == '__main__':
     full_timep_default(
         # default labels
         label_up='⇪', label_down='⇓',
+        hour_format='{0:02}h', minute_format='{0:02}m', second_format='{0:02}s'
+    )
+    minsec_timep_default(
         hour_format='{0:02}h', minute_format='{0:02}m', second_format='{0:02}s'
     )
     executor.start_polling(dp, skip_updates=True)

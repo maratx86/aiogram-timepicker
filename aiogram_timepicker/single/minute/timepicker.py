@@ -5,37 +5,12 @@ from aiogram.utils.callback_data import CallbackData
 from aiogram.types import CallbackQuery
 
 from aiogram_timepicker.result import Result, Status
-from aiogram_timepicker.utils import Function
+from aiogram_timepicker import utils as lib_utils
 from . import utils, timepicker_callback
 from .utils import _default
 
 
 class TimePicker:
-    class _Functions:
-        create_time = None
-        insert_time = None
-        create_group = None
-        insert_group = None
-        create_cancel = None
-        insert_cancel = None
-        create_back = None
-        insert_back = None
-
-        def __init__(self,
-                     create_button, insert_button,
-                     create_group, insert_group,
-                     create_cancel, insert_cancel,
-                     create_back, insert_back,
-                     ):
-            self.create_time = Function(create_button)
-            self.insert_time = Function(insert_button)
-            self.create_group = Function(create_group)
-            self.insert_group = Function(insert_group)
-            self.create_cancel = Function(create_cancel)
-            self.insert_cancel = Function(insert_cancel)
-            self.create_back = Function(create_back)
-            self.insert_back = Function(insert_back)
-
     def __init__(self, interval: int = 1, callback: CallbackData = timepicker_callback, **kwargs):
         self.cancel = None
         if not 60 % interval:
@@ -54,7 +29,7 @@ class TimePicker:
         self.check_available = False
         self.group_inside_count = 10
         self.group_count = 6
-        self.functions = self._Functions(
+        self.functions = lib_utils.Functions(
             utils.default_create_time_button,
             utils.default_insert_time_button,
             utils.default_create_group_button,
@@ -67,22 +42,7 @@ class TimePicker:
         self.kwargs_params(**kwargs)
 
     def change_default_action(self, **kwargs):
-        if 'create_time' in kwargs:
-            self.functions.create_time.action = kwargs.get('create_time')
-        if 'insert_time' in kwargs:
-            self.functions.insert_time.action = kwargs.get('insert_time')
-        if 'create_group' in kwargs:
-            self.functions.create_group.action = kwargs.get('create_group')
-        if 'insert_group' in kwargs:
-            self.functions.insert_group.action = kwargs.get('insert_group')
-        if 'create_cancel' in kwargs:
-            self.functions.create_cancel.action = kwargs.get('create_cancel')
-        if 'insert_cancel' in kwargs:
-            self.functions.insert_cancel.action = kwargs.get('insert_cancel')
-        if 'create_back' in kwargs:
-            self.functions.create_back.action = kwargs.get('create_back')
-        if 'insert_back' in kwargs:
-            self.functions.insert_back.action = kwargs.get('insert_back')
+        self.functions.change_actions(**kwargs)
         return self
 
     def kwargs_params(self, **kwargs):

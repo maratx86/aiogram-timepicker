@@ -3,6 +3,7 @@ from aiogram.utils.callback_data import CallbackData
 
 from aiogram_timepicker.single.minute import timepicker
 from aiogram_timepicker.result import Result, Status
+from aiogram_timepicker import utils as lib_utils
 
 from . import timepicker_callback, _default, utils
 
@@ -26,7 +27,7 @@ class TimePicker(timepicker.TimePicker):
         self.check_available = False
         self.group_inside_count = 10
         self.group_count = 6
-        self.functions = self._Functions(
+        self.functions = lib_utils.Functions(
             utils.default_create_time_button,
             utils.default_insert_time_button,
             utils.default_create_group_button,

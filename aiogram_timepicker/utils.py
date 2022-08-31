@@ -15,3 +15,47 @@ class Function:
     @action.setter
     def action(self, value):
         self._custom_action = value
+
+
+class Functions:
+    create_time = None
+    insert_time = None
+    create_group = None
+    insert_group = None
+    create_cancel = None
+    insert_cancel = None
+    create_back = None
+    insert_back = None
+
+    def __init__(self,
+                 create_button, insert_button,
+                 create_group, insert_group,
+                 create_cancel, insert_cancel,
+                 create_back, insert_back,
+                 ):
+        self.create_time = Function(create_button)
+        self.insert_time = Function(insert_button)
+        self.create_group = Function(create_group)
+        self.insert_group = Function(insert_group)
+        self.create_cancel = Function(create_cancel)
+        self.insert_cancel = Function(insert_cancel)
+        self.create_back = Function(create_back)
+        self.insert_back = Function(insert_back)
+
+    def change_actions(self, **kwargs):
+        if 'create_time' in kwargs:
+            self.create_time.action = kwargs.get('create_time')
+        if 'insert_time' in kwargs:
+            self.insert_time.action = kwargs.get('insert_time')
+        if 'create_group' in kwargs:
+            self.create_group.action = kwargs.get('create_group')
+        if 'insert_group' in kwargs:
+            self.insert_group.action = kwargs.get('insert_group')
+        if 'create_cancel' in kwargs:
+            self.create_cancel.action = kwargs.get('create_cancel')
+        if 'insert_cancel' in kwargs:
+            self.insert_cancel.action = kwargs.get('insert_cancel')
+        if 'create_back' in kwargs:
+            self.create_back.action = kwargs.get('create_back')
+        if 'insert_back' in kwargs:
+            self.insert_back.action = kwargs.get('insert_back')

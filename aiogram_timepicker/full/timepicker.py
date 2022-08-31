@@ -130,8 +130,10 @@ class TimePicker:
                 hours=hours, minutes=minutes, seconds=seconds,
             )
         elif act == "CHOOSE_H":
-            kb = await hour.TimePicker(1, None).start_picker(
-                hours, str_callback=self.callback.new('CHANGE', '{hour}', minutes, seconds))
+            kb = await hour.TimePicker(
+                1, None,
+                str_callback=self.callback.new('CHANGE', '{hour}', minutes, seconds))\
+                .start_picker(hours)
             await query.message.edit_reply_markup(kb)
             return result.Result(
                 result.Status.CHANGE_HOUR,

@@ -19,7 +19,7 @@ class TimePicker:
         self.hour_format = _default['hour_format']
         self.hour_current_format = _default['hour_current_format']
         self.hour_unavailable_format = _default['hour_unavailable_format']
-        self.str_callback = None
+        self.str_callback = kwargs.get('str_callback', None)
         self.is_available = None
         self.check_available = False
         self.kwargs_params(**kwargs)
@@ -31,7 +31,6 @@ class TimePicker:
         self.hour_format = kwargs.get('hour_format', self.hour_format or _default['hour_format'])
         self.hour_current_format = kwargs.get('hour_current_format', self.hour_current_format or _default['hour_current_format'])
         self.hour_unavailable_format = kwargs.get('hour_unavailable_format', self.hour_unavailable_format or _default['hour_unavailable_format'])
-        self.str_callback = kwargs.get('str_callback', self.str_callback or None)
         self.is_available = kwargs.get('is_available', self.is_available)
         self.check_available = kwargs.get('check_available', self.check_available) is True
 

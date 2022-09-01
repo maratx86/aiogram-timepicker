@@ -18,3 +18,9 @@ def default(**kwargs):
         _default['minute_format'] = kwargs.get('minute_format')
     if 'second_format' in kwargs:
         _default['second_format'] = kwargs.get('second_format')
+    if 'hour_current_format' in kwargs:
+        _default['hour_current_format'] = kwargs.get('hour_current_format')
+    if 'minute_current_format' in kwargs:
+        _default['minute_current_format'] = kwargs.get('minute_current_format')
+    if 'second_current_format' in kwargs:
+        _default['second_current_format'] = kwargs.get('second_current_format')

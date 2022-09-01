@@ -26,6 +26,11 @@ class TimePicker:
         self.hour_format = kwargs.get('hour_format', _default['hour_format'])
         self.minute_format = kwargs.get('minute_format', _default['minute_format'])
         self.second_format = kwargs.get('second_format', _default['second_format'])
+        self.hour_current_format = kwargs.get('hour_current_format', _default['hour_current_format'])
+        self.minute_current_format = kwargs.get('minute_current_format', _default['minute_current_format'])
+        self.second_current_format = kwargs.get('second_current_format', _default['second_current_format'])
+        self.count_top = kwargs.get('count_top', 2)
+        self.count_bottom = kwargs.get('count_bottom', 2)
         self.timezone = kwargs.get('timezone', 0)
 
     async def _atomic_picker(self, inline_kb: InlineKeyboardMarkup, _time: datetime):
@@ -87,8 +92,6 @@ class TimePicker:
         self.cancel = cancel
         inline_kb = InlineKeyboardMarkup(row_width=7)
         _time = datetime(1971, 1, 1, hour, minute, second)
-        self.count_top = 3
-        self.count_bottom = 3
         _tds = (
             timedelta(hours=1),
             timedelta(minutes=1 if _time.minute + 1 < 60 else - (60 - 1)),
@@ -129,15 +132,15 @@ class TimePicker:
             inline_kb.row()
 
         inline_kb.insert(InlineKeyboardButton(
-            self.hour_format.format(hour),
+            self.hour_current_format.format(hour),
             callback_data=self.callback.new('IGNORE', hour, minute, second)
         ))
         inline_kb.insert(InlineKeyboardButton(
-            self.minute_format.format(minute),
+            self.minute_current_format.format(minute),
             callback_data=self.callback.new('IGNORE', hour, minute, second)
         ))
         inline_kb.insert(InlineKeyboardButton(
-            self.second_format.format(second),
+            self.second_current_format.format(second),
             callback_data=self.callback.new('IGNORE', hour, minute, second)
         ))
         inline_kb.row()

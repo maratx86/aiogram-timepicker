@@ -12,6 +12,9 @@ _default = {
     'hour_format': '{0:02}',
     'minute_format': '{0:02}',
     'second_format': '{0:02}',
+    'hour_current_format': '{0:02}',
+    'minute_current_format': '{0:02}',
+    'second_current_format': '{0:02}',
 }
 
 from .timepicker import TimePicker

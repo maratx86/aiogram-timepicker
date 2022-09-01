@@ -9,7 +9,7 @@ from aiogram_timepicker import FullTimePicker, full_timep_callback, full_timep_d
     HourTimePicker, hour_timep_callback, MinuteTimePicker, minute_timep_callback, \
     SecondTimePicker, second_timep_callback, \
     MinSecTimePicker, minsec_timep_callback, minsec_timep_default, \
-    Full2TimePicker, full2_timep_callback
+    carousel
 
 
 # insert your telegram bot API key here
@@ -126,14 +126,14 @@ async def process_second_timepicker(callback_query: CallbackQuery, callback_data
 async def full2_picker_handler(message: Message):
     await message.answer(
         "Please select a time: ",
-        reply_markup=await Full2TimePicker().start_picker()
+        reply_markup=await carousel.FullTimePicker().start_picker()
     )
 
 
 # full timepicker usage
-@dp.callback_query_handler(full2_timep_callback.filter())
+@dp.callback_query_handler(carousel.full_timep_callback.filter())
 async def process_full2_timepicker(callback_query: CallbackQuery, callback_data: dict):
-    r = await Full2TimePicker().process_selection(callback_query, callback_data)
+    r = await carousel.FullTimePicker().process_selection(callback_query, callback_data)
     if r.selected:
         await callback_query.message.answer(
             f'You selected {r.time.strftime("%H:%M:%S")}',
@@ -150,5 +150,10 @@ if __name__ == '__main__':
     )
     minsec_timep_default(
         hour_format='{0:02}h', minute_format='{0:02}m', second_format='{0:02}s'
+    )
+    carousel.full_timep_default(
+        hour_current_format='{0:02}h',
+        minute_current_format='{0:02}m',
+        second_current_format='{0:02}s',
     )
     executor.start_polling(dp, skip_updates=True)

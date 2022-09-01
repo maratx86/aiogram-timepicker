@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "aiogram_timepicker"
-version = "0.1.0"
+version = "0.1.1"
 authors = [
   { name="Marat Ashrafzianov", email="maratashdev@gmail.com" },
 ]

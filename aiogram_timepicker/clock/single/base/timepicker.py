@@ -13,6 +13,11 @@ class TimePicker:
         self.callback = callback
         self.cancel_button_needed = kwargs.get('cancel_button_needed', True) is True
         self.select_button_needed = kwargs.get('select_button_needed', False) is True
+        self._rows = 7
+        self._columns = 7
+        self._row_center = 3
+        self._column_center = 3
+        self._row_end = 6
 
     def kwargs_params(self, **kwargs):
         pass
@@ -34,9 +39,9 @@ class TimePicker:
         """
         if len(kwargs):
             self.kwargs_params(**kwargs)
-        inline_kb = InlineKeyboardMarkup(row_width=7)
-        for row in range(7):
-            for column in range(7):
+        inline_kb = InlineKeyboardMarkup(row_width=self._rows)
+        for row in range(self._rows):
+            for column in range(self._columns):
                 await self.functions.insert_time.action(
                     self,
                     row,

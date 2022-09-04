@@ -26,7 +26,7 @@ start_kb = ReplyKeyboardMarkup(resize_keyboard=True, )
 start_kb.row('Full TimePicker', 'Full Carousel TimePicker')
 start_kb.row('Hour TimePicker', 'Minute Timepicker', 'Second Timepicker')
 start_kb.row('Minute & Second')
-start_kb.row('Clock Hour 1', 'Clock Hour 2', 'Clock Minutes')
+start_kb.row('Clock Hour 1', 'Clock Hour 2', 'Clock Minutes', 'Clock Minutes 2')
 
 
 # starting bot when user sends `/start` command, answering with inline timepicker
@@ -195,7 +195,7 @@ async def clock_minute_picker_handler(message: Message):
         reply_markup=await clock.single.c60_ts5.TimePicker(
             select_button_needed=True,
             cancel_button_needed=True,
-        ).start_picker(6)
+        ).start_picker()
     )
 
 
@@ -203,6 +203,33 @@ async def clock_minute_picker_handler(message: Message):
 @dp.callback_query_handler(clock.single.c60_ts5.timepicker_callback.filter())
 async def process_clock_minute_timepicker(callback_query: CallbackQuery, callback_data: dict):
     r = await clock.single.c60_ts5.TimePicker(
+        select_button_needed=True,
+        cancel_button_needed=True,
+    ).process_selection(callback_query, callback_data)
+    if r.selected:
+        await callback_query.message.answer(
+            f'You selected {r.time.strftime("%H:%M:%S")}',
+            reply_markup=start_kb
+        )
+        await callback_query.message.delete_reply_markup()
+    elif r.status == result.Status.CANCELED:
+        await callback_query.message.delete()
+
+@dp.message_handler(Text(equals=['Clock Minutes 2'], ignore_case=True))
+async def clock_minute_2_picker_handler(message: Message):
+    await message.answer(
+        "Please select a time: ",
+        reply_markup=await clock.single.c60_ts3.TimePicker(
+            select_button_needed=True,
+            cancel_button_needed=True,
+        ).start_picker()
+    )
+
+
+# clock minute 2nd timepicker usage
+@dp.callback_query_handler(clock.single.c60_ts3.timepicker_callback.filter())
+async def process_clock_minute_2_timepicker(callback_query: CallbackQuery, callback_data: dict):
+    r = await clock.single.c60_ts3.TimePicker(
         select_button_needed=True,
         cancel_button_needed=True,
     ).process_selection(callback_query, callback_data)

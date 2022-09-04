@@ -1,7 +1,7 @@
 from aiogram.types import CallbackQuery
 from aiogram.utils.callback_data import CallbackData
 
-from aiogram_timepicker.single.minute import timepicker
+from aiogram_timepicker.panel.single.minute import timepicker
 from aiogram_timepicker.result import Result, Status
 from aiogram_timepicker import utils as lib_utils
 

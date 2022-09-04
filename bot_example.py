@@ -5,12 +5,11 @@ from aiogram import Bot, Dispatcher
 from aiogram.types import Message, CallbackQuery, ReplyKeyboardMarkup
 from aiogram.utils import executor
 from aiogram.dispatcher.filters import Text
-from aiogram_timepicker import FullTimePicker, full_timep_callback, full_timep_default, \
+from aiogram_timepicker.panel import FullTimePicker, full_timep_callback, full_timep_default, \
     HourTimePicker, hour_timep_callback, MinuteTimePicker, minute_timep_callback, \
     SecondTimePicker, second_timep_callback, \
-    MinSecTimePicker, minsec_timep_callback, minsec_timep_default, \
-    result, \
-    carousel, clock
+    MinSecTimePicker, minsec_timep_callback, minsec_timep_default
+from aiogram_timepicker import result, carousel, clock
 
 
 # insert your telegram bot API key here

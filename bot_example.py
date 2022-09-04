@@ -9,7 +9,8 @@ from aiogram_timepicker import FullTimePicker, full_timep_callback, full_timep_d
     HourTimePicker, hour_timep_callback, MinuteTimePicker, minute_timep_callback, \
     SecondTimePicker, second_timep_callback, \
     MinSecTimePicker, minsec_timep_callback, minsec_timep_default, \
-    carousel
+    result, \
+    carousel, clock
 
 
 # insert your telegram bot API key here
@@ -26,6 +27,7 @@ start_kb = ReplyKeyboardMarkup(resize_keyboard=True, )
 start_kb.row('Full TimePicker', 'Full Carousel TimePicker')
 start_kb.row('Hour TimePicker', 'Minute Timepicker', 'Second Timepicker')
 start_kb.row('Minute & Second')
+start_kb.row('Clock Hour 1', 'Clock Hour 2', 'Clock Minutes')
 
 
 # starting bot when user sends `/start` command, answering with inline timepicker
@@ -130,7 +132,7 @@ async def full2_picker_handler(message: Message):
     )
 
 
-# full timepicker usage
+# carousel full timepicker usage
 @dp.callback_query_handler(carousel.full_timep_callback.filter())
 async def process_full2_timepicker(callback_query: CallbackQuery, callback_data: dict):
     r = await carousel.FullTimePicker().process_selection(callback_query, callback_data)
@@ -140,6 +142,79 @@ async def process_full2_timepicker(callback_query: CallbackQuery, callback_data:
             reply_markup=start_kb
         )
         await callback_query.message.delete_reply_markup()
+
+
+@dp.message_handler(Text(equals=['Clock Hour 1'], ignore_case=True))
+async def clock_hour_1_picker_handler(message: Message):
+    await message.answer(
+        "Please select a time: ",
+        reply_markup=await clock.single.c24.TimePicker(select_button_needed=True).start_picker(6)
+    )
+
+
+# clock hour 1st timepicker usage
+@dp.callback_query_handler(clock.single.c24.timepicker_callback.filter())
+async def process_clock_hour_1_timepicker(callback_query: CallbackQuery, callback_data: dict):
+    r = await clock.single.c24.TimePicker(
+        select_button_needed=True).process_selection(callback_query, callback_data)
+    if r.selected:
+        await callback_query.message.answer(
+            f'You selected {r.time.strftime("%H:%M:%S")}',
+            reply_markup=start_kb
+        )
+        await callback_query.message.delete_reply_markup()
+    elif r.status == result.Status.CANCELED:
+        await callback_query.message.delete()
+
+
+@dp.message_handler(Text(equals=['Clock Hour 2'], ignore_case=True))
+async def clock_hour_2_picker_handler(message: Message):
+    await message.answer(
+        "Please select a time: ",
+        reply_markup=await clock.single.c24_ts3.TimePicker(select_button_needed=True).start_picker(6)
+    )
+
+
+# clock hour 2nd timepicker usage
+@dp.callback_query_handler(clock.single.c24_ts3.timepicker_callback.filter())
+async def process_clock_hour_2_timepicker(callback_query: CallbackQuery, callback_data: dict):
+    r = await clock.single.c24_ts3.TimePicker(select_button_needed=True).process_selection(callback_query, callback_data)
+    if r.selected:
+        await callback_query.message.answer(
+            f'You selected {r.time.strftime("%H:%M:%S")}',
+            reply_markup=start_kb
+        )
+        await callback_query.message.delete_reply_markup()
+    elif r.status == result.Status.CANCELED:
+        await callback_query.message.delete()
+
+
+@dp.message_handler(Text(equals=['Clock Minutes'], ignore_case=True))
+async def clock_minute_picker_handler(message: Message):
+    await message.answer(
+        "Please select a time: ",
+        reply_markup=await clock.single.c60_ts5.TimePicker(
+            select_button_needed=True,
+            cancel_button_needed=True,
+        ).start_picker(6)
+    )
+
+
+# clock minute timepicker usage
+@dp.callback_query_handler(clock.single.c60_ts5.timepicker_callback.filter())
+async def process_clock_minute_timepicker(callback_query: CallbackQuery, callback_data: dict):
+    r = await clock.single.c60_ts5.TimePicker(
+        select_button_needed=True,
+        cancel_button_needed=True,
+    ).process_selection(callback_query, callback_data)
+    if r.selected:
+        await callback_query.message.answer(
+            f'You selected {r.time.strftime("%H:%M:%S")}',
+            reply_markup=start_kb
+        )
+        await callback_query.message.delete_reply_markup()
+    elif r.status == result.Status.CANCELED:
+        await callback_query.message.delete()
 
 
 if __name__ == '__main__':
@@ -155,5 +230,8 @@ if __name__ == '__main__':
         hour_current_format='{0:02}h',
         minute_current_format='{0:02}m',
         second_current_format='{0:02}s',
+    )
+    clock.single.c24.utils.default(
+        time_current_format='⦾',
     )
     executor.start_polling(dp, skip_updates=True)

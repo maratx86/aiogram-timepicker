@@ -73,7 +73,7 @@ class Result:
         return self._editable
 
     @editable.setter
-    def editable_setter(self, value: bool):
+    def editable(self, value: bool):
         if not self._editable:
             AttributeError()
         self._editable = value is True
@@ -83,7 +83,7 @@ class Result:
         return self._hours
 
     @hours.setter
-    def hours_setter(self, value: int):
+    def hours(self, value: int):
         if not self._editable:
             AttributeError()
         self._hours = value
@@ -93,8 +93,8 @@ class Result:
     def minutes(self):
         return self._minutes
 
-    @hours.setter
-    def minutes_setter(self, value: int):
+    @minutes.setter
+    def minutes(self, value: int):
         if not self._editable:
             AttributeError()
         self._minutes = value
@@ -104,8 +104,8 @@ class Result:
     def seconds(self):
         return self._seconds
 
-    @hours.setter
-    def seconds_setter(self, value: int):
+    @seconds.setter
+    def seconds(self, value: int):
         if not self._editable:
             AttributeError()
         self._seconds = value

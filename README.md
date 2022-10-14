@@ -12,7 +12,7 @@ Offers 9 types of panel time picker:
 * * Single Second Picker - user can select a second.
 * Carousel Pickers (`aiogram_timepicker.carousel`):
 * * Full Time Picker - user can select a time with hours, minutes and seconds with carousel.
-* Clock Pickers (`aiogram_timepicker.single`):
+* Clock Pickers (`aiogram_timepicker.clock`):
 * * c24 - user can select a hour between 0 and 24.
 * * c24_ts3 - user can select a minute/second between 0 and 21 with 3 timestamp.
 * * c60_ts5 - user can select a minute/second between 0 and 55 with 5 timestamp.

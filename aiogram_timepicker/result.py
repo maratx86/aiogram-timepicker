@@ -96,7 +96,7 @@ class Result:
     @minutes.setter
     def minutes(self, value: int):
         if not self._editable:
-            AttributeError()
+            raise AttributeError()
         self._minutes = value
         self._clear()
 
@@ -107,7 +107,7 @@ class Result:
     @seconds.setter
     def seconds(self, value: int):
         if not self._editable:
-            AttributeError()
+            raise AttributeError()
         self._seconds = value
         self._clear()
 

@@ -2,6 +2,7 @@
 
 ## Description
 A simple inline time selection tool for [aiogram](https://github.com/aiogram/aiogram) telegram bots written in Python.
+Demo: [@aiogram_timepicker_bot](https://t.me/aiogram_timepicker_bot).
 
 Offers 9 types of panel time picker:
 * Panel Pickers (`aiogram_timepicker.panel` and `aiogram_timepicker.panel.single`):
@@ -26,10 +27,8 @@ A full working example on how to use aiogram-timepicker is provided in *bot_exam
 You create a timepicker panel and add it to a message with a *reply_markup* parameter, and then you can process it in a `callbackqueyhandler` method using the *process_selection* method.
 
 ## Demo
-Demonstration of this tool with [**bot_example.py**](./bot_example.py).
+Code example is [**bot_example.py**](./bot_example.py) and demo use [@aiogram_timepicker_bot](https://t.me/aiogram_timepicker_bot).
 
-
-![demo](https://s1.gifyu.com/images/bot-0.2.0.gif)
 
 ## Licence
 Read more about licence [here](./LICENSE.txt).

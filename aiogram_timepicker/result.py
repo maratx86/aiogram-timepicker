@@ -75,7 +75,7 @@ class Result:
     @editable.setter
     def editable(self, value: bool):
         if not self._editable:
-            AttributeError()
+            raise AttributeError()
         self._editable = value is True
 
     @property
@@ -85,7 +85,7 @@ class Result:
     @hours.setter
     def hours(self, value: int):
         if not self._editable:
-            AttributeError()
+            raise AttributeError()
         self._hours = value
         self._clear()
 
@@ -96,7 +96,7 @@ class Result:
     @minutes.setter
     def minutes(self, value: int):
         if not self._editable:
-            AttributeError()
+            raise AttributeError()
         self._minutes = value
         self._clear()
 
@@ -107,7 +107,7 @@ class Result:
     @seconds.setter
     def seconds(self, value: int):
         if not self._editable:
-            AttributeError()
+            raise AttributeError()
         self._seconds = value
         self._clear()
 
